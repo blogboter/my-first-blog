@@ -67,3 +67,28 @@ def post_share(request, post_id):
 	else:
 		form=EmailPostForm()
 	return render(request, 'share.html',  {'post':post, 'form':form})
+
+
+def search_form(request, query=None):
+	object_list = Post.objects.filter(published_date__lte=timezone.now()).order_by('published_date')
+	
+	
+	if 'query' in request.GET:
+		cd=request.GET.get('query')
+		
+			
+		a=Post.objects.filter(text__icontains=cd)
+		b=Post.objects.filter(title__icontains=cd)
+		object_list=a|b
+		object_list=object_list.order_by('published_date')
+		n=object_list.count()
+		paginator=Paginator(object_list, 2)
+		page=request.GET.get('page', 1)
+	try:
+		posts = paginator.page(page)
+	except PageNotAnInteger:
+		posts = paginator.page(1)
+	except EmptyPage:
+		posts = paginator.page(paginator.num_pages)
+
+	return render(request, 'search.html', {'posts':posts, 'slug':cd, 'num':range(paginator.num_pages), 'n':n, 'page':page} )

@@ -10,9 +10,9 @@
         </div>
 
         {% with comments.count as total_comments %}
-<h2>
+<h4>
 {{ total_comments }} comment{{ total_comments|pluralize }}
-</h2>
+</h4>
 {% endwith %}
 
 {% for comment in comments %}
